@@ -228,18 +228,10 @@ def pick(context, name, default=None):
     try:
         return context[name]
     except (KeyError, TypeError, AttributeError):
-        if isinstance(name, basestring):
-            try:
-                exists = hasattr(context, name)
-            except UnicodeEncodeError:
-                # Python 2 raises UnicodeEncodeError on non-ASCII strings
-                pass
-            else:
-                if exists:
-                    return getattr(context, name)
-        if hasattr(context, 'get'):
-            return context.get(name)
-        return default
+        value = getattr(context, name, default)
+    if not callable(value):
+        return value
+    return default
 
 
 sentinel = object()
